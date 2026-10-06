@@ -133,7 +133,7 @@ const SPECIALIZATIONS = [
   "Наследственные споры",
 ];
 
-const FALLBACK_ENDPOINT = "https://formsubmit.co/ajax/huston81@mail.ru";
+const FALLBACK_ENDPOINT = "/send.php";
 
 // ===== SCROLL REVEAL =====
 function initReveal() {

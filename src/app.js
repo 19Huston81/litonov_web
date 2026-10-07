@@ -133,7 +133,7 @@ const SPECIALIZATIONS = [
   "Наследственные споры",
 ];
 
-const FALLBACK_ENDPOINT = "/send.php";
+const FALLBACK_ENDPOINT = "./send.php";
 
 // ===== SCROLL REVEAL =====
 function initReveal() {
@@ -504,7 +504,7 @@ function initForm() {
       });
       if (!res.ok) throw new Error("send failed");
 
-      formCard.innerHTML = `<div class="form-success"><span class="form-success-icon"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><h3>Заявка отправлена</h3><p>Спасибо! Александр Михайлович свяжется с вами в ближайшее время. В срочных случаях звоните: +7 (908) 162-51-59.</p></div>`;
+      formCard.innerHTML = `<div class="form-success"><span class="form-success-icon"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><h3>Заявка отправлена</h3><p>Спасибо! Александр Михайлович свяжется с вами в ближайшее время. В срочных случаях звоните:<br /> +7 (908) 162-51-59.</p></div>`;
     } catch {
       formError.style.display = "block";
       submitBtn.disabled = false;

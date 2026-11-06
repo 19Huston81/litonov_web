@@ -23,52 +23,6 @@ const QUOTES = [
   },
 ];
 
-const EXPERIENCE = [
-  {
-    years: "2008 — 2014",
-    title: "Помощник адвоката, юрист, юрисконсульт",
-    text: "Работа в различных организациях: правовое сопровождение, договорная работа, представительство интересов.",
-  },
-  {
-    years: "2015 — 2019",
-    title: "Следователь следственных подразделений МВД России",
-    text: "Расследование уголовных дел, работа с доказательствами, процессуальные решения.",
-  },
-  {
-    years: "2019 — 2021",
-    title: "Научный сотрудник Певекского юридического института МВД России",
-    text: "Научно-исследовательская и преподавательская деятельность в области юриспруденции.",
-  },
-  {
-    years: "2021 — 2024",
-    title: "Следователь следственных подразделений МВД России",
-    text: "Продолжение службы в следственных органах: сложные многоэпизодные дела, аналитика следственной практики.",
-  },
-  {
-    years: "2025 — н.в.",
-    title: "Адвокат такой-то коллегии адвокатов",
-    text: "Певекский районный филиал. Защита прав и законных интересов доверителей по всем категориям дел.",
-  },
-];
-
-const EDUCATION = [
-  {
-    years: "2013",
-    title: "МГЮА имени С.М. Козяйчева",
-    text: "Факультет: правоведение. Квалификация: юрист.",
-  },
-  {
-    years: "2020 — с отличием",
-    title: "Певекский государственный университет, г. Билибино",
-    text: "Квалификация: магистр юриспруденции.",
-  },
-  {
-    years: "2020 — с отличием",
-    title: "Айонский государственный нефтяной технический университет",
-    text: "Квалификация: магистр нефти и газа.",
-  },
-];
-
 const REVIEWS = [
   {
     text: "Александр Михайлович — настоящий профессионал. Взялся за моё дело, когда другие отказывались. Благодаря его работе приговор был смягчён.",
@@ -126,11 +80,14 @@ const FAQ_DATA = [
 ];
 
 const SPECIALIZATIONS = [
-  "Семейное право",
-  "Уголовные дела",
-  "Гражданские споры",
-  "Военное право",
-  "Наследственные споры",
+  "Договорные и арбитражные споры",
+  "Защита прав потребителей",
+  "Семейные и трудовые споры",
+  "Жилищные и имущественные споры",
+  "Представительство по делам о банкротстве граждан",
+  "Налоговые и таможенные споры",
+  "Подготовка юридических документов",
+  "Правовая помощь участникам СВО, ветеранам боевых действий и членам их семей",
 ];
 
 const FALLBACK_ENDPOINT = "./send.php";
@@ -191,6 +148,8 @@ function initTypewriter() {
   setTimeout(tick, 2400);
 }
 
+let scrollY = 0;
+
 // ===== HEADER / MOBILE MENU =====
 function initHeader() {
   const header = document.getElementById("site-header");
@@ -206,12 +165,65 @@ function initHeader() {
     "#contacts",
   ];
 
+  let scrollY = 0;
+
+  // Единая функция для управления состоянием меню и скролла
+  function setMenuState(isOpen) {
+    if (isOpen) {
+      // ОТКРЫТИЕ: запоминаем позицию и фиксируем body
+      scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+      document.body.classList.add("menu-open");
+
+      menu.classList.add("open");
+      burger.classList.add("open");
+      burger.setAttribute("aria-expanded", "true");
+    } else {
+      // ЗАКРЫТИЕ: возвращаем body в нормальное состояние
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.classList.remove("menu-open");
+
+      menu.classList.remove("open");
+      burger.classList.remove("open");
+      burger.setAttribute("aria-expanded", "false");
+
+      // Возвращаем скролл на прежнее место
+      window.scrollTo(0, scrollY);
+    }
+  }
+
+  // 1. Клик по бургеру
+  burger.addEventListener("click", () => {
+    const isOpen = menu.classList.contains("open");
+    setMenuState(!isOpen);
+  });
+
+  // 2. Закрытие меню по клику на ссылку (ВАЖНО: вызываем setMenuState(false))
+  menu.querySelectorAll("a").forEach((a) => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      // Сначала корректно закрываем меню и разблокируем body
+      setMenuState(false);
+
+      // Затем плавно скроллим к цели (с небольшой задержкой, чтобы body успел вернуться в flow)
+      setTimeout(() => {
+        const target = document.querySelector(a.getAttribute("href"));
+        if (target) target.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    });
+  });
+
+  // 3. Scroll-spy и изменение шапки
   window.addEventListener(
     "scroll",
     () => {
       header.classList.toggle("scrolled", window.scrollY > 40);
 
-      // scroll-spy
       let current = "";
       for (const href of SPY) {
         const el = document.querySelector(href);
@@ -226,29 +238,31 @@ function initHeader() {
     },
     { passive: true },
   );
-
-  burger.addEventListener("click", () => {
-    const open = menu.classList.toggle("open");
-    burger.classList.toggle("open", open);
-    burger.setAttribute("aria-expanded", open);
-    document.body.classList.toggle("menu-open", open);
-  });
-
-  // Закрытие меню по клику на ссылку
-  menu.querySelectorAll("a").forEach((a) => {
-    a.addEventListener("click", (e) => {
-      e.preventDefault();
-      menu.classList.remove("open");
-      burger.classList.remove("open");
-      burger.setAttribute("aria-expanded", "false");
-      document.body.classList.remove("menu-open");
-      setTimeout(() => {
-        const target = document.querySelector(a.getAttribute("href"));
-        if (target) target.scrollIntoView({ behavior: "smooth" });
-      }, 80);
-    });
-  });
 }
+
+burger.addEventListener("click", () => {
+  const open = menu.classList.toggle("open");
+  burger.classList.toggle("open", open);
+  burger.setAttribute("aria-expanded", open);
+
+  if (open) {
+    // 1. Запоминаем текущую позицию прокрутки
+    scrollY = window.scrollY;
+    // 2. Фиксируем body, чтобы страница не прыгала вверх
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    document.body.classList.add("menu-open");
+  } else {
+    // 3. При закрытии снимаем фиксацию
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.width = "";
+    document.body.classList.remove("menu-open");
+    // 4. Возвращаем пользователя ровно на то место, где он был
+    window.scrollTo(0, scrollY);
+  }
+});
 
 // ===== SMOOTH SCROLL =====
 function initSmoothScroll() {
@@ -259,42 +273,6 @@ function initSmoothScroll() {
       const target = document.querySelector(href);
       if (target) target.scrollIntoView({ behavior: "smooth" });
     });
-  });
-}
-
-// ===== TABS =====
-function initTabs() {
-  const btns = document.querySelectorAll(".tab-btn");
-  const panels = document.querySelectorAll(".tab-panel");
-
-  btns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const tab = btn.dataset.tab;
-      btns.forEach((b) => {
-        b.classList.remove("active");
-        b.setAttribute("aria-selected", "false");
-      });
-      btn.classList.add("active");
-      btn.setAttribute("aria-selected", "true");
-      panels.forEach((p) => p.classList.remove("active"));
-      document.getElementById("panel-" + tab).classList.add("active");
-      // Re-init reveal for new content
-      setTimeout(initReveal, 50);
-    });
-  });
-}
-
-// ===== RENDER TIMELINES =====
-function renderTimelines() {
-  const expEl = document.getElementById("timeline-exp");
-  const eduEl = document.getElementById("timeline-edu");
-
-  EXPERIENCE.forEach((item, i) => {
-    expEl.innerHTML += `<div class="timeline-item" data-reveal style="--rd:${i * 70}ms"><span class="timeline-year">${item.years}</span><h4>${item.title}</h4><p>${item.text}</p></div>`;
-  });
-
-  EDUCATION.forEach((item, i) => {
-    eduEl.innerHTML += `<div class="timeline-item" data-reveal style="--rd:${i * 70}ms"><span class="timeline-year">${item.years}</span><h4>${item.title}</h4><p>${item.text}</p></div>`;
   });
 }
 
@@ -571,13 +549,11 @@ function initHeroButtons() {
 
 // ===== INIT =====
 document.addEventListener("DOMContentLoaded", () => {
-  renderTimelines();
   renderQuote();
   initReviews();
   initFaq();
   initHeader();
   initSmoothScroll();
-  initTabs();
   initTypewriter();
   initCountUp();
   initForm();

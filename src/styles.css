@@ -376,17 +376,8 @@ h4 {
   height: 46px;
   display: grid;
   place-items: center;
-  font-weight: 800;
-  font-size: 23px;
   overflow: hidden;
   color: var(--gold);
-  border: 1.5px solid var(--line-gold);
-  border-radius: 10px;
-  background: linear-gradient(
-    160deg,
-    rgba(201, 164, 92, 0.18),
-    rgba(201, 164, 92, 0.04)
-  );
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
@@ -506,10 +497,14 @@ h4 {
 }
 
 .mobile-menu {
-  inset: var(--header-h) 0 0 0;
   position: fixed;
-  background: rgba(8, 13, 25, 0.97);
+  top: var(--header-h); /* Начинается ровно под шапкой */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(8, 13, 25, 0.98);
   backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   padding: 34px 24px 40px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -523,6 +518,28 @@ h4 {
     opacity 0.32s ease,
     transform 0.32s ease;
   z-index: 150;
+}
+
+.mobile-menu.open {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* Важно: здесь должен быть только overflow, позицию управляет JS */
+body.menu-open {
+  overflow: hidden;
+}
+
+.mobile-menu.open {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* Убедитесь, что body.menu-open выглядит так (остальное делает JS) */
+body.menu-open {
+  overflow: hidden;
 }
 .mobile-menu.open {
   opacity: 1;
@@ -1011,7 +1028,7 @@ body.menu-open {
 .about-text p {
   color: var(--muted);
   margin-bottom: 16px;
-  font-size: 16.5px;
+  font-size: 14px;
 }
 .about-text p b {
   color: var(--text);
